@@ -1,8 +1,17 @@
 const request = require('supertest');
 const app = require('../app');
+const fs = require('fs/promises');
+const path = require('path');
+
+const dataPath = path.join(__dirname, '..', 'data', 'productos.json');
 
 describe('API Productos', () => {
   let id;
+
+  // Limpiar el archivo antes de comenzar
+  beforeAll(async () => {
+    await fs.writeFile(dataPath, '[]');
+  });
 
   it('Crea un producto', async () => {
     const res = await request(app)
@@ -16,6 +25,7 @@ describe('API Productos', () => {
   it('Obtiene todos los productos', async () => {
     const res = await request(app).get('/api/productos');
     expect(res.statusCode).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.length).toBeGreaterThan(0);
   });
 
@@ -23,5 +33,19 @@ describe('API Productos', () => {
     const res = await request(app).get(`/api/productos/${id}`);
     expect(res.statusCode).toBe(200);
     expect(res.body.id).toBe(id);
+  });
+
+  it('Actualiza un producto', async () => {
+    const res = await request(app)
+      .put(`/api/productos/${id}`)
+      .send({ precio: 2.0 });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.precio).toBe(2.0);
+  });
+
+  it('Elimina un producto', async () => {
+    const res = await request(app).delete(`/api/productos/${id}`);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.mensaje).toBe('Producto eliminado');
   });
 });

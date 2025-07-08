@@ -1,28 +1,19 @@
 const express = require('express');
-const { body } = require('express-validator');
 const router = express.Router();
 const productoController = require('../controllers/producto.controller');
+const {
+  validarProducto,
+  validarProductoParcial
+} = require('../middlewares/validacionesProducto');
+const validarId = require('../middlewares/validarId');
 
 router.get('/', productoController.obtenerTodos);
-router.get('/:id', productoController.obtenerPorId);
-router.post(
-  '/',
-  [
-    body('nombre').notEmpty().withMessage('El nombre es obligatorio'),
-    body('precio').isFloat({ gt: 0 }).withMessage('El precio debe ser positivo'),
-    body('stock').isInt({ min: 0 }).withMessage('El stock debe ser un entero positivo'),
-  ],
-  productoController.crear
-);
-router.put(
-  '/:id',
-  [
-    body('nombre').optional().notEmpty(),
-    body('precio').optional().isFloat({ gt: 0 }),
-    body('stock').optional().isInt({ min: 0 }),
-  ],
-  productoController.actualizar
-);
-router.delete('/:id', productoController.eliminar);
+router.get('/:id', validarId, productoController.obtenerPorId);
+router.post('/', validarProducto, productoController.crear);
+router.put('/:id', validarId, validarProductoParcial, productoController.actualizar);
+router.delete('/:id', validarId, productoController.eliminar);
+
+router.get('/stock/bajo', productoController.obtenerConStockBajo);
+
 
 module.exports = router;
