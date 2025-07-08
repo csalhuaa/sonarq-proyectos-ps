@@ -37,11 +37,22 @@ Para ejecutar las pruebas unitarias:
 pytest test_todolist.py
 ```
 
+Para generar un reporte de cobertura en formato XML (requerido para SonarQube), primero instala `pytest-cov`:
+```sh
+pip install pytest-cov
+```
+
+Luego ejecuta:
+```sh
+pytest --cov=todolist --cov-report=xml
+```
+Esto generará un archivo `coverage.xml` en la raíz del proyecto.
+
 ## Análisis de calidad con SonarQube
 
 Puedes analizar la calidad del código usando SonarQube.
 
-### Pasos:
+### Opción 1: Comando directo
 
 1. Crea un proyecto en tu instancia de SonarQube y obtén el `projectKey` y un `token` de usuario.
 2. Instala SonarScanner si no lo tienes.
@@ -49,6 +60,31 @@ Puedes analizar la calidad del código usando SonarQube.
 
    ```sh
    sonar-scanner.bat -D"sonar.projectKey=<projectKey>" -D"sonar.sources=." -D"sonar.host.url=<url local o online>" -D"sonar.token=<token>"
+   ```
+
+### Opción 2: Usando archivo `sonar-project.properties`
+
+Puedes crear un archivo llamado `sonar-project.properties` en la raíz del proyecto con el siguiente contenido:
+
+   ```
+   # Identificación del proyecto
+   sonar.projectKey=todolist
+   sonar.projectName=ToDo List CLI en Python
+
+   # Rutas del código fuente y pruebas
+   sonar.sources=todolist.py
+   sonar.tests=test_todolist.py
+   sonar.language=py
+   sonar.sourceEncoding=UTF-8
+
+   # Ruta del reporte de cobertura
+   sonar.python.coverage.reportPaths=coverage.xml
+   ```
+
+Luego ejecuta el análisis con:
+
+   ```sh
+   sonar-scanner.bat "-Dsonar.login=<token>" "-Dsonar.host.url=<url local o online>"
    ```
 
 Asegúrate de que el servidor SonarQube esté accesible y que el token tenga permisos suficientes.
