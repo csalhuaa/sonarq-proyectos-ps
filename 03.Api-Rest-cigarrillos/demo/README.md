@@ -47,6 +47,16 @@ O en Windows:
 mvnw.cmd test
 ```
 
+## Generar reporte de cobertura
+
+Para generar el reporte de cobertura de código (por ejemplo, para Jacoco), ejecuta el siguiente comando desde la carpeta `demo`:
+
+```sh
+mvn clean verify
+```
+
+Esto generará el reporte de cobertura en `target/site/jacoco/jacoco.xml`, que puede ser utilizado por SonarQube para el análisis de cobertura.
+
 ## Análisis de calidad con SonarQube
 
 Puedes analizar la calidad del código usando SonarQube y el archivo `sonar-project.properties`.
@@ -59,6 +69,7 @@ sonar.projectName=<nameProyecto> // editar con el nombre del proyecto
 sonar.sources=src/main/java
 sonar.tests=src/test/java
 sonar.java.binaries=target/classes
+sonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
 sonar.sourceEncoding=UTF-8
 ```
 
